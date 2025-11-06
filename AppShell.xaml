@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="AppRpgEtec.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:AppRpgEtec"
+    xmlns:viewsPersonagens="clr-namespace:AppRpgEtec.Views.Personagens"
+    xmlns:viewsArmas="clr-namespace:AppRpgEtec.Views.Armas"
+    xmlns:viewsUsuarios="clr-namespace:AppRpgEtec.Views.Usuarios"
+    Shell.FlyoutBehavior="Flyout"
+    Title="AppRpgEtec">
+
+
+
+    <Tab Title="Info" Route="info" Icon="info.svg">
+        <ShellContent Title="Usuário" Route="usuario"
+                  ContentTemplate="{DataTemplate viewsUsuarios:ImagemUsuarioView}" />
+    
+
+    <ShellContent Title="Sobre" Route="sobre"
+              ContentTemplate="{DataTemplate local:AboutView}" />
+
+    <ShellContent Title="Descrição" Route="desc"
+              ContentTemplate="{DataTemplate local:DescriptionView}" />
+
+    </Tab>
+
+    <ShellContent
+        Title="Home"
+        ContentTemplate="{DataTemplate viewsPersonagens:ListagemView}"
+        Route="MainPage" />
+
+    <ShellContent
+    Title="Usuários"
+    ContentTemplate="{DataTemplate viewsUsuarios:LocalizacaoView}"
+    Route="MainPage" />
+    
+    <ShellContent
+    Title="Armas"
+    ContentTemplate="{DataTemplate viewsArmas:CadastroArmaView}"
+    Route="armas" />
+
+</Shell>
