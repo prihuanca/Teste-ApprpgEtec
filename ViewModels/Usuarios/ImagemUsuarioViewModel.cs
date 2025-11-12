@@ -14,7 +14,7 @@ namespace AppRpgEtec.ViewModels.Usuarios
     public class ImagemUsuarioViewModel : BaseViewModel
     {
         private UsuarioService uService;
-        //private static string conexaoAzureStorage = "DefaultEndpointsProtocol=https;AccountName=etecpriscila;AccountKey=hytKTpWXyzwHBQY8+GG7dldQY1so20twdUb3IjxjLeLWx+Vs7CLkeqBWEpnvTf4CxQ2ULYyB5I6G+AStLY7Qcw==;EndpointSuffix=core.windows.net";
+        private static string conexaoAzureStorage = "DefaultEndpointsProtocol=https;AccountName=etecpriscila;AccountKey=hytKTpWXyzwHBQY8+GG7dldQY1so20twdUb3IjxjLeLWx+Vs7CLkeqBWEpnvTf4CxQ2ULYyB5I6G+AStLY7Qcw==;EndpointSuffix=core.windows.net";
         private static string container = "arquivos";
 
         //ctor --> Criar Construtor
@@ -32,6 +32,8 @@ namespace AppRpgEtec.ViewModels.Usuarios
             FotografarCommand = new Command(Fotografar);
             SalvarImagemCommand = new Command(SalvarImagemAzure);
             AbrirGaleriaCommand = new Command(AbrirGaleria);
+
+            CarregarUsuarioAzure();
         }
 
         public ICommand FotografarCommand { get; }
@@ -66,7 +68,7 @@ namespace AppRpgEtec.ViewModels.Usuarios
         {
             try
             {
-                if(MediaPicker.Default.IsCaptureSupported)
+                if (MediaPicker.Default.IsCaptureSupported)
                 {
                     FileResult photo = await MediaPicker.Default.CapturePhotoAsync();
 
@@ -89,8 +91,8 @@ namespace AppRpgEtec.ViewModels.Usuarios
             catch (Exception ex)
             {
                 await Application.Current.MainPage
-                    .DisplayAlert("ops", 
-                            ex.Message + 
+                    .DisplayAlert("ops",
+                            ex.Message +
                             "Detalhes:" + ex.InnerException, "Ok");
 
             }
@@ -119,6 +121,14 @@ namespace AppRpgEtec.ViewModels.Usuarios
                         }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage
+                    .DisplayAlert("ops",
+                            ex.Message +
+                            "Detalhes:" + ex.InnerException, "Ok");
+
             }
 
 
@@ -157,6 +167,35 @@ namespace AppRpgEtec.ViewModels.Usuarios
                                             "Detalhes:" + ex.InnerException, "Ok");
             }
         }
+
+        public async void CarregarUsuarioAzure()
+        {
+            try
+            {
+                int usuarioId = Preferences.Get("UsuarioId", 0);
+                string filename = $"{usuarioId}.jpg";
+                var blobClient = new BlobClient(conexaoAzureStorage, container, filename);
+
+                if (blobClient.Exists())
+                {
+                    Byte[] fileBytes;
+
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        blobClient.OpenRead().CopyTo(ms);
+                        fileBytes = ms.ToArray();
+                    }
+
+                    Foto = fileBytes;
+                }
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage
+                    .DisplayAlert("Ops", ex.Message + " Detalhes: " + ex.InnerException, "Ok");
+            }
+        }
+
 
     }
 }
